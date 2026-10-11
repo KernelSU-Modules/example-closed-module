@@ -31,7 +31,7 @@ jobs:
 
       # Publishes to the public release repository with a token that can write ONLY that repository
       # (fine-grained PAT: Contents read and write). Pin the action to a full commit SHA.
-      - uses: KernelSU-Modules/tools/actions/module-release@4425fdedd645dd941be83b782b599b99ccfc6839
+      - uses: KernelSU-Modules/tools/actions/module-release@51020eda3418b4ef609f32d458f01d1a018dddb0
         with:
           zip: ${{ env.ZIP }}
           repository: KernelSU-Modules/example-closed-module-dist
