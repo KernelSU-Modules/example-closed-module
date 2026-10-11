@@ -1,0 +1,7 @@
+id=example_closed_module_demo
+name=Example Closed Module Demo
+version=v1.0.0
+versionCode=100
+author=KernelSU-Modules contributors
+description=Shows how a closed-source module publishes to KernelSU Modules. It does nothing on the device.
+updateJson=https://modules.kernelsu.org/api/v1/modules/example_closed_module_demo/update.json

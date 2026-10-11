@@ -1,0 +1,40 @@
+name: Release
+
+# Push a v* tag (annotated: its message becomes the release notes) to publish to the public
+# release repository. Run manually (workflow_dispatch) for a dry run that checks the setup.
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0 # tag messages are used as release notes
+
+      - name: Build
+        run: |
+          version=$(sed -n 's/^version=//p' module/module.prop)
+          code=$(sed -n 's/^versionCode=//p' module/module.prop)
+          ./build.sh "out/example_closed_module_demo-$code-$version.zip"
+          echo "ZIP=$(ls out/*.zip)" >> "$GITHUB_ENV"
+
+      # Publishes to the public release repository with a token that can write ONLY that repository
+      # (fine-grained PAT: Contents read and write). Pin the action to a full commit SHA.
+      - uses: KernelSU-Modules/tools/actions/module-release@4425fdedd645dd941be83b782b599b99ccfc6839
+        with:
+          zip: ${{ env.ZIP }}
+          repository: KernelSU-Modules/example-closed-module-dist
+          token: ${{ secrets.DIST_REPO_TOKEN }}
+          tag: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
+          dry-run: ${{ github.event_name == 'workflow_dispatch' }}
